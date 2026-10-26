@@ -1,0 +1,471 @@
+{
+  "location": {
+    "id": 3099434,
+    "name": "Gdańsk",
+    "country": "Poland",
+    "countryCode": "PL",
+    "admin1": "Pomerania",
+    "latitude": 54.35205,
+    "longitude": 18.64637,
+    "timezone": "Europe/Warsaw"
+  },
+  "model": "weather-only-v1",
+  "limitations": ["SURF_WEATHER_PROXY_ONLY", "SKI_WEATHER_ONLY"],
+  "days": [
+    {
+      "date": "2026-10-24",
+      "activities": [
+        {
+          "id": "outdoor-sightseeing",
+          "name": "Outdoor Sightseeing",
+          "score": 90,
+          "reason": {
+            "code": "OUTDOOR_MILD_DRY",
+            "text": "Mild maximum temperature of 22°C with 0 mm precipitation and wind up to 10 km/h.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "surfing",
+          "name": "Surfing",
+          "score": 70,
+          "reason": {
+            "code": "SURF_MILD",
+            "text": "Mild weather proxy: 22°C and wind up to 10 km/h; no wave or coastal-access assessment.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "indoor-sightseeing",
+          "name": "Indoor Sightseeing",
+          "score": 60,
+          "reason": {
+            "code": "INDOOR_AVAILABLE",
+            "text": "Indoor sightseeing remains available in mild, dry weather.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "skiing",
+          "name": "Skiing",
+          "score": 10,
+          "reason": {
+            "code": "SKI_ADVERSE",
+            "text": "Maximum temperature of 22°C is too warm for the proposed skiing weather band; resort and snowpack unknown.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-25",
+      "activities": [
+        {
+          "id": "outdoor-sightseeing",
+          "name": "Outdoor Sightseeing",
+          "score": 90,
+          "reason": {
+            "code": "OUTDOOR_MILD_DRY",
+            "text": "Mild maximum temperature of 22°C with 0 mm precipitation and wind up to 10 km/h.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "surfing",
+          "name": "Surfing",
+          "score": 70,
+          "reason": {
+            "code": "SURF_MILD",
+            "text": "Mild weather proxy: 22°C and wind up to 10 km/h; no wave or coastal-access assessment.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "indoor-sightseeing",
+          "name": "Indoor Sightseeing",
+          "score": 60,
+          "reason": {
+            "code": "INDOOR_AVAILABLE",
+            "text": "Indoor sightseeing remains available in mild, dry weather.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "skiing",
+          "name": "Skiing",
+          "score": 10,
+          "reason": {
+            "code": "SKI_ADVERSE",
+            "text": "Maximum temperature of 22°C is too warm for the proposed skiing weather band; resort and snowpack unknown.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-26",
+      "activities": [
+        {
+          "id": "outdoor-sightseeing",
+          "name": "Outdoor Sightseeing",
+          "score": 90,
+          "reason": {
+            "code": "OUTDOOR_MILD_DRY",
+            "text": "Mild maximum temperature of 22°C with 0 mm precipitation and wind up to 10 km/h.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "surfing",
+          "name": "Surfing",
+          "score": 70,
+          "reason": {
+            "code": "SURF_MILD",
+            "text": "Mild weather proxy: 22°C and wind up to 10 km/h; no wave or coastal-access assessment.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "indoor-sightseeing",
+          "name": "Indoor Sightseeing",
+          "score": 60,
+          "reason": {
+            "code": "INDOOR_AVAILABLE",
+            "text": "Indoor sightseeing remains available in mild, dry weather.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "skiing",
+          "name": "Skiing",
+          "score": 10,
+          "reason": {
+            "code": "SKI_ADVERSE",
+            "text": "Maximum temperature of 22°C is too warm for the proposed skiing weather band; resort and snowpack unknown.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-27",
+      "activities": [
+        {
+          "id": "outdoor-sightseeing",
+          "name": "Outdoor Sightseeing",
+          "score": 90,
+          "reason": {
+            "code": "OUTDOOR_MILD_DRY",
+            "text": "Mild maximum temperature of 22°C with 0 mm precipitation and wind up to 10 km/h.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "surfing",
+          "name": "Surfing",
+          "score": 70,
+          "reason": {
+            "code": "SURF_MILD",
+            "text": "Mild weather proxy: 22°C and wind up to 10 km/h; no wave or coastal-access assessment.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "indoor-sightseeing",
+          "name": "Indoor Sightseeing",
+          "score": 60,
+          "reason": {
+            "code": "INDOOR_AVAILABLE",
+            "text": "Indoor sightseeing remains available in mild, dry weather.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "skiing",
+          "name": "Skiing",
+          "score": 10,
+          "reason": {
+            "code": "SKI_ADVERSE",
+            "text": "Maximum temperature of 22°C is too warm for the proposed skiing weather band; resort and snowpack unknown.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-28",
+      "activities": [
+        {
+          "id": "outdoor-sightseeing",
+          "name": "Outdoor Sightseeing",
+          "score": 90,
+          "reason": {
+            "code": "OUTDOOR_MILD_DRY",
+            "text": "Mild maximum temperature of 22°C with 0 mm precipitation and wind up to 10 km/h.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "surfing",
+          "name": "Surfing",
+          "score": 70,
+          "reason": {
+            "code": "SURF_MILD",
+            "text": "Mild weather proxy: 22°C and wind up to 10 km/h; no wave or coastal-access assessment.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "indoor-sightseeing",
+          "name": "Indoor Sightseeing",
+          "score": 60,
+          "reason": {
+            "code": "INDOOR_AVAILABLE",
+            "text": "Indoor sightseeing remains available in mild, dry weather.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "skiing",
+          "name": "Skiing",
+          "score": 10,
+          "reason": {
+            "code": "SKI_ADVERSE",
+            "text": "Maximum temperature of 22°C is too warm for the proposed skiing weather band; resort and snowpack unknown.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-29",
+      "activities": [
+        {
+          "id": "outdoor-sightseeing",
+          "name": "Outdoor Sightseeing",
+          "score": 90,
+          "reason": {
+            "code": "OUTDOOR_MILD_DRY",
+            "text": "Mild maximum temperature of 22°C with 0 mm precipitation and wind up to 10 km/h.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "surfing",
+          "name": "Surfing",
+          "score": 70,
+          "reason": {
+            "code": "SURF_MILD",
+            "text": "Mild weather proxy: 22°C and wind up to 10 km/h; no wave or coastal-access assessment.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "indoor-sightseeing",
+          "name": "Indoor Sightseeing",
+          "score": 60,
+          "reason": {
+            "code": "INDOOR_AVAILABLE",
+            "text": "Indoor sightseeing remains available in mild, dry weather.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "skiing",
+          "name": "Skiing",
+          "score": 10,
+          "reason": {
+            "code": "SKI_ADVERSE",
+            "text": "Maximum temperature of 22°C is too warm for the proposed skiing weather band; resort and snowpack unknown.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        }
+      ]
+    },
+    {
+      "date": "2026-10-30",
+      "activities": [
+        {
+          "id": "outdoor-sightseeing",
+          "name": "Outdoor Sightseeing",
+          "score": 90,
+          "reason": {
+            "code": "OUTDOOR_MILD_DRY",
+            "text": "Mild maximum temperature of 22°C with 0 mm precipitation and wind up to 10 km/h.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "surfing",
+          "name": "Surfing",
+          "score": 70,
+          "reason": {
+            "code": "SURF_MILD",
+            "text": "Mild weather proxy: 22°C and wind up to 10 km/h; no wave or coastal-access assessment.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "indoor-sightseeing",
+          "name": "Indoor Sightseeing",
+          "score": 60,
+          "reason": {
+            "code": "INDOOR_AVAILABLE",
+            "text": "Indoor sightseeing remains available in mild, dry weather.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        },
+        {
+          "id": "skiing",
+          "name": "Skiing",
+          "score": 10,
+          "reason": {
+            "code": "SKI_ADVERSE",
+            "text": "Maximum temperature of 22°C is too warm for the proposed skiing weather band; resort and snowpack unknown.",
+            "facts": {
+              "temperatureMaxC": 22,
+              "precipitationMm": 0,
+              "snowfallCm": 0,
+              "windMaxKmh": 10
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

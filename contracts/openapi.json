@@ -1,0 +1,385 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Proposed Activity Ranking API",
+    "version": "1.0.0",
+    "description": "Product proposal for a specification-first exercise. See docs/contract.md for semantics and docs/suitability.md for the exhaustive decision table. No product implementation exists."
+  },
+  "paths": {
+    "/v1/locations": {
+      "get": {
+        "operationId": "discoverLocations",
+        "summary": "Discover cities and towns by name; preserve provider candidate order",
+        "parameters": [
+          {
+            "name": "query",
+            "in": "query",
+            "required": true,
+            "description": "Trim surrounding whitespace; 2–80 Unicode code points. Provider normalized prefix matching for 3+ characters; exact name for 2. Preserve Unicode and all ambiguous candidates.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matches, including an empty list",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SearchResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (INVALID_INPUT)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Provider failure or invalid data (PROVIDER_FAILURE / UPSTREAM_DATA_INVALID)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Provider deadline exceeded (PROVIDER_TIMEOUT)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/activity-rankings": {
+      "get": {
+        "operationId": "rankActivities",
+        "summary": "Rank four activities within each of seven local calendar days, including today",
+        "parameters": [
+          {
+            "name": "locationId",
+            "in": "query",
+            "required": true,
+            "description": "Positive safe integer in decimal digits; resolve with Open-Meteo /v1/get. No preloaded database.",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 9007199254740991
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Seven chronological days; date on each day applies to all its activities",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RankingResponse"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Unknown provider ID (LOCATION_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input (INVALID_INPUT)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Provider failure or invalid data (PROVIDER_FAILURE / UPSTREAM_DATA_INVALID)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Provider deadline exceeded (PROVIDER_TIMEOUT)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Location": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "country",
+          "countryCode",
+          "admin1",
+          "latitude",
+          "longitude",
+          "timezone"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "country": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1
+          },
+          "countryCode": {
+            "type": "string",
+            "nullable": true,
+            "pattern": "^[A-Z]{2}$"
+          },
+          "admin1": {
+            "type": "string",
+            "nullable": true,
+            "minLength": 1
+          },
+          "latitude": {
+            "type": "number",
+            "minimum": -90,
+            "maximum": 90
+          },
+          "longitude": {
+            "type": "number",
+            "minimum": -180,
+            "maximum": 180
+          },
+          "timezone": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          }
+        }
+      },
+      "SearchResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["locations"],
+        "properties": {
+          "locations": {
+            "type": "array",
+            "maxItems": 10,
+            "items": {
+              "$ref": "#/components/schemas/Location"
+            }
+          }
+        }
+      },
+      "Facts": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "temperatureMaxC",
+          "precipitationMm",
+          "snowfallCm",
+          "windMaxKmh"
+        ],
+        "properties": {
+          "temperatureMaxC": {
+            "type": "number"
+          },
+          "precipitationMm": {
+            "type": "number",
+            "minimum": 0
+          },
+          "snowfallCm": {
+            "type": "number",
+            "minimum": 0
+          },
+          "windMaxKmh": {
+            "type": "number",
+            "minimum": 0
+          }
+        }
+      },
+      "Reason": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "text", "facts"],
+        "properties": {
+          "code": {
+            "type": "string",
+            "enum": [
+              "SKI_ADVERSE",
+              "SKI_FAVOURABLE",
+              "SKI_OTHER",
+              "SURF_ADVERSE",
+              "SURF_MILD",
+              "SURF_OTHER",
+              "OUTDOOR_ADVERSE",
+              "OUTDOOR_MILD_DRY",
+              "OUTDOOR_OTHER",
+              "INDOOR_PREFERRED",
+              "INDOOR_AVAILABLE"
+            ]
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "\\S"
+          },
+          "facts": {
+            "$ref": "#/components/schemas/Facts"
+          }
+        }
+      },
+      "Activity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "score", "reason"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "skiing",
+              "surfing",
+              "outdoor-sightseeing",
+              "indoor-sightseeing"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "enum": [
+              "Skiing",
+              "Surfing",
+              "Outdoor Sightseeing",
+              "Indoor Sightseeing"
+            ]
+          },
+          "score": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 100
+          },
+          "reason": {
+            "$ref": "#/components/schemas/Reason"
+          }
+        }
+      },
+      "Day": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["date", "activities"],
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "activities": {
+            "type": "array",
+            "minItems": 4,
+            "maxItems": 4,
+            "items": {
+              "$ref": "#/components/schemas/Activity"
+            }
+          }
+        }
+      },
+      "RankingResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["location", "model", "limitations", "days"],
+        "properties": {
+          "location": {
+            "$ref": "#/components/schemas/Location"
+          },
+          "model": {
+            "type": "string",
+            "enum": ["weather-only-v1"]
+          },
+          "limitations": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "enum": ["SURF_WEATHER_PROXY_ONLY", "SKI_WEATHER_ONLY"]
+            }
+          },
+          "days": {
+            "type": "array",
+            "minItems": 7,
+            "maxItems": 7,
+            "items": {
+              "$ref": "#/components/schemas/Day"
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["error"],
+        "properties": {
+          "error": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["code", "message"],
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "INVALID_INPUT",
+                  "LOCATION_NOT_FOUND",
+                  "PROVIDER_TIMEOUT",
+                  "PROVIDER_FAILURE",
+                  "UPSTREAM_DATA_INVALID"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1,
+                "pattern": "\\S"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

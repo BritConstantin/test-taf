@@ -1,0 +1,8 @@
+node_modules
+dist
+reports
+package-lock.json
+features
+.agents
+.codex
+.aws

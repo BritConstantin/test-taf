@@ -1,0 +1,14 @@
+{
+  "locations": [
+    {
+      "id": 3099434,
+      "name": "Gdańsk",
+      "country": "Poland",
+      "countryCode": "PL",
+      "admin1": "Pomerania",
+      "latitude": 54.35205,
+      "longitude": 18.64637,
+      "timezone": "Europe/Warsaw"
+    }
+  ]
+}
