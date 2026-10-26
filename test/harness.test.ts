@@ -1,9 +1,30 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
+import { readFileSync } from 'node:fs';
 import { ApiClient, TransportError } from '../src/api/client';
+import type { HttpResult } from '../src/api/client';
 import { ProviderStub } from '../src/provider/stub';
+import {
+  assertProviderTimeout,
+  assertWeek,
+  rankingResponse,
+} from '../src/contracts/validate';
+import {
+  assertExplanation,
+  explanationExamples,
+} from '../src/contracts/explanations';
+import {
+  location,
+  mild,
+  WARSAW_DATES,
+  weatherWeek,
+} from '../src/provider/fixtures';
+import {
+  PROVIDER_TIMEOUT_RESPONSE_BUDGET_MS,
+  STUB_DELAY_MS,
+} from '../src/config';
 
-// Infrastructure probes only: none of these servers implements product API endpoints.
+// Harness and assertion probes only: no server here implements product API endpoints.
 void test('stub matches HTTP semantics independently of parameter/field order and journals mismatches', async (context) => {
   const stub = new ProviderStub();
   const origin = await stub.start();
@@ -95,7 +116,134 @@ void test('an HTTP error and invalid JSON remain observable responses', async (c
   assert.match(result.headers['content-type'] ?? '', /application\/json/);
   assert.equal(result.rawBody, '{bad-json');
   assert.equal(result.body, undefined);
+  assert.ok(
+    Number.isFinite(result.elapsedMs) && result.elapsedMs >= 0,
+    'HTTP responses retain monotonic elapsed time',
+  );
   stub.verify();
+});
+
+void test('timeout assertion accepts a prompt HTTP 504 but rejects a late 504 or a different error', () => {
+  // Direct assertion inputs, not a fake SUT. Synthetic elapsed values avoid scheduler-dependent waits.
+  const body = {
+    error: {
+      code: 'PROVIDER_TIMEOUT',
+      message: 'Weather service timed out. Please try again.',
+    },
+  };
+  const response: HttpResult = {
+    status: 504,
+    headers: { 'content-type': 'application/json' },
+    body,
+    rawBody: JSON.stringify(body),
+    elapsedMs: PROVIDER_TIMEOUT_RESPONSE_BUDGET_MS - 50,
+  };
+  assertProviderTimeout(response);
+  for (const elapsedMs of [
+    PROVIDER_TIMEOUT_RESPONSE_BUDGET_MS + 50,
+    STUB_DELAY_MS,
+    2000,
+    Number.NaN,
+    -1,
+  ]) {
+    assert.throws(
+      () => assertProviderTimeout({ ...response, elapsedMs }),
+      /Provider timeout response took/,
+    );
+  }
+  assert.throws(
+    () => assertProviderTimeout({ ...response, status: 503 }),
+    /HTTP status/,
+  );
+  const differentError = {
+    error: { code: 'PROVIDER_FAILURE', message: 'Provider failed.' },
+  };
+  assert.throws(
+    () =>
+      assertProviderTimeout({
+        ...response,
+        body: differentError,
+        rawBody: JSON.stringify(differentError),
+      }),
+    /PROVIDER_TIMEOUT/,
+  );
+});
+
+void test('representative explanation templates accept correct facts and legitimate limitation statements', () => {
+  for (const example of explanationExamples) {
+    for (const [id, text] of Object.entries(example.texts)) {
+      assertExplanation(id, text, example.weather, 'documented example');
+      assertExplanation(
+        id,
+        `  ${text.replaceAll(' ', '\n')}  `,
+        example.weather,
+        'whitespace only',
+      );
+    }
+  }
+});
+
+void test('week assertions reject contradictory explanation mutations, including on the seventh day', () => {
+  const rawBody = readFileSync('contracts/examples/rankings.json', 'utf8');
+  const body: unknown = JSON.parse(rawBody);
+  const sample: HttpResult = {
+    status: 200,
+    headers: { 'content-type': 'application/json' },
+    rawBody,
+    body,
+    elapsedMs: 50,
+  };
+  assertWeek(sample, location(), WARSAW_DATES, weatherWeek(mild));
+  const valid = rankingResponse(sample);
+  const allContradictory = structuredClone(valid);
+  for (const day of allContradictory.days)
+    for (const activity of day.activities) {
+      activity.reason.text =
+        'Clear skies and 45°C; excellent surfing waves at the ski resort.';
+    }
+  assert.throws(
+    () =>
+      assertWeek(
+        {
+          ...sample,
+          body: allContradictory,
+          rawBody: JSON.stringify(allContradictory),
+        },
+        location(),
+        WARSAW_DATES,
+        weatherWeek(mild),
+      ),
+    /explanation must match/,
+  );
+
+  const lastDay = valid.days.at(-1);
+  assert.ok(lastDay, 'Static example needs its seventh day');
+  const outdoor = lastDay.activities.find(
+    (activity) => activity.id === 'outdoor-sightseeing',
+  );
+  assert.ok(outdoor, 'Static example needs outdoor sightseeing');
+  for (const text of [
+    outdoor.reason.text.replace('22°C', '45°C'),
+    outdoor.reason.text.replace('0 mm', '12 mm'),
+    `${outdoor.reason.text} Excellent surfing waves at the ski resort.`,
+  ]) {
+    const mutated = structuredClone(valid);
+    const finalActivity = mutated.days
+      .at(-1)
+      ?.activities.find((activity) => activity.id === outdoor.id);
+    assert.ok(finalActivity);
+    finalActivity.reason.text = text;
+    assert.throws(
+      () =>
+        assertWeek(
+          { ...sample, body: mutated, rawBody: JSON.stringify(mutated) },
+          location(),
+          WARSAW_DATES,
+          weatherWeek(mild),
+        ),
+      /2026-10-30 outdoor-sightseeing: explanation must match/,
+    );
+  }
 });
 
 void test('connection refused retains its cause and differs from an HTTP error/deadline', async () => {

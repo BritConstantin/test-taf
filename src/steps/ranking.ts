@@ -114,6 +114,14 @@ Then(
 );
 
 Then(
+  'the representative explanations describe the controlled weather and activity limitations',
+  function (this: AcceptanceWorld) {
+    // assertWeek checks each day's text when its weather matches a documented prose example.
+    assertWeek(this.result(), this.selected, this.dates, this.weather);
+  },
+);
+
+Then(
   'every activity matches the manually specified seven-day examples',
   function (this: AcceptanceWorld) {
     const week = assertWeek(

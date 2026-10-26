@@ -20,7 +20,7 @@ Expected: install and quality checks pass; acceptance exits **non-zero** with `T
 | -------------------------------------------- | -------------------------------------------------------------------- |
 | `npm run typecheck`                          | Strict TypeScript checking                                           |
 | `npm run lint` / `npm run format:check`      | Typed ESLint / Prettier                                              |
-| `npm run test:harness`                       | Five infrastructure probes; no product behaviour                     |
+| `npm run test:harness`                       | Eight harness/assertion probes; no SUT behaviour                     |
 | `npm run validate`                           | OpenAPI, referenced schemas, static samples and fixture/clock checks |
 | `npm run bdd:dry-run`                        | Detect undefined/ambiguous steps without executing hooks/assertions  |
 | `npm run test:acceptance -- --tags @journey` | Run the complete name → selection → ranking scenario                 |
@@ -67,7 +67,7 @@ Trim search whitespace; accept 2–80 Unicode code points. Provider matching is 
   "score": 90,
   "reason": {
     "code": "OUTDOOR_MILD_DRY",
-    "text": "Mild maximum temperature of 22°C with 0 mm precipitation and wind up to 10 km/h.",
+    "text": "Mild, dry weather: maximum temperature 22°C, precipitation 0 mm, maximum wind 10 km/h.",
     "facts": {
       "temperatureMaxC": 22,
       "precipitationMm": 0,
@@ -78,7 +78,7 @@ Trim search whitespace; accept 2–80 Unicode code points. Provider matching is 
 }
 ```
 
-Seven chronological local calendar dates include **today** (assumption). Rank the four activities within each day by descending integer score 0–100; score is suitability, not probability or rank. Ties: Skiing, Surfing, Outdoor Sightseeing, Indoor Sightseeing. [Decision table](docs/suitability.md) defines fields, units, precedence and exhaustive bands. Reason codes and numeric facts are checked; prose need only be nonblank and consistent.
+Seven chronological local calendar dates include **today** (assumption). Rank the four activities within each day by descending integer score 0–100; score is suitability, not probability or rank. Ties: Skiing, Surfing, Outdoor Sightseeing, Indoor Sightseeing. [Decision table](docs/suitability.md) defines fields, units, precedence and exhaustive bands. Reason codes and numeric facts are checked. Proposed [short explanation templates](docs/explanations.md) also pin prose for three representative weather profiles; other prose is only checked for nonblank text.
 
 Every ranking declares model `weather-only-v1` and limitations `SURF_WEATHER_PROXY_ONLY`, `SKI_WEATHER_ONLY`. Surfing describes a limited weather proxy, not waves, coastal access or safety; skiing does not imply a resort or sufficient existing snowpack. Missing/invalid forecast data fails the entire request, with no invented scores.
 
@@ -97,7 +97,7 @@ Other mappings: invalid public input 400; unknown ID 404; provider failure 502; 
 
 ## Dependency control and results
 
-Cucumber calls the external SUT over HTTP. Only upstream `/v1/search`, `/v1/get`, `/v1/forecast` are stubbed by a reachable, scenario-owned HTTP server. The future SUT must support two provider base URLs, a 300 ms provider deadline and a fixed clock at `2026-10-23T23:30:00Z`. Those seams are specified, **not yet verified against a SUT**. [Topology and startup example](docs/provider-control.md) explain isolation, deadlines, clock conversion and the remaining egress limitation.
+Cucumber calls the external SUT over HTTP. Only upstream `/v1/search`, `/v1/get`, `/v1/forecast` are stubbed by a reachable, scenario-owned HTTP server. The future SUT must support two provider base URLs, a 300 ms provider deadline and a fixed clock at `2026-10-23T23:30:00Z`. Timeout scenarios delay valid provider data by 900 ms and require a complete HTTP 504 within a monotonic 600 ms budget (300 ms deadline plus 300 ms local overhead tolerance). Those seams are specified, **not yet verified against a SUT**. [Topology and startup example](docs/provider-control.md) explain isolation, deadlines, clock conversion and the remaining egress limitation.
 
 Console failures include request context; `reports/cucumber.html` and `reports/cucumber.json` contain bounded response/journal attachments. Reports are ignored by Git. A dry-run reports skipped execution intentionally: it verifies bindings only. Acceptance failures are never converted to passes or rerun automatically.
 
@@ -105,12 +105,12 @@ Connection refused is **infrastructure-red**: it proves runnable invocation reac
 
 ## Review guide and scope
 
-- [Features](features) — 23 scenario definitions, including focused outlines.
+- [Features](features) — 24 scenario definitions, including focused outlines.
 - [Automation](src) — typed World, HTTP client, provider fixtures/stub, contracts and domain steps.
 - [Traceability and deferred risks](docs/traceability.md) — implemented specifications versus execution evidence.
 - [Engineering notes](docs/engineering-notes.md) — ten interview decisions, rationale and alternatives.
 - [Official sources](docs/sources.md) — checked provider/tooling details.
 
-Trade-offs: daily weather bands favour explainability over meteorological precision; structured reasoning avoids brittle prose equality; serial execution keeps a fixed-port external-process topology small. Representative malformed data and boundaries are covered, not every combination. Marine integration/location applicability, best-day views, advanced search, full egress enforcement and broader resilience are deferred. Auth, load, persistence and UI testing are outside the ticket.
+Trade-offs: daily weather bands favour explainability over meteorological precision; representative prose templates catch contradictions while other inputs retain structured reasoning checks; serial execution keeps a fixed-port external-process topology small. Representative malformed data and boundaries are covered, not every combination. Marine integration/location applicability, best-day views, advanced search, full egress enforcement and broader resilience are deferred. Auth, load, persistence and UI testing are outside the ticket.
 
 AI disclosure: Codex helped draft and implement the proposed contract, decision table, Gherkin, harness and documentation, and ran the checks recorded in the evidence file. Provider/tool APIs were checked against official sources. No human review, independent review or correctness guarantee is claimed. Product agreement on the proposals and real SUT integration/behaviour validation remain necessary. Everything is prepared locally; publishing a public GitHub repository is a separate user action.

@@ -1,8 +1,11 @@
+import { performance } from 'node:perf_hooks';
+
 export interface HttpResult {
   status: number;
   headers: Record<string, string>;
   rawBody: string;
   body: unknown;
+  elapsedMs: number;
 }
 
 export class TransportError extends Error {
@@ -33,6 +36,8 @@ export class ApiClient {
     const url = new URL(path, this.baseUrl);
     url.search = new URLSearchParams(query).toString();
     const controller = new AbortController();
+    // Monotonic elapsed time is unaffected by the external SUT's fixed calendar clock.
+    const startedAt = performance.now();
     const timer = setTimeout(() => controller.abort(), this.timeoutMs);
     try {
       const response = await fetch(url, {
@@ -51,6 +56,7 @@ export class ApiClient {
         headers: Object.fromEntries(response.headers),
         rawBody,
         body,
+        elapsedMs: performance.now() - startedAt,
       };
     } catch (cause) {
       throw new TransportError(

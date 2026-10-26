@@ -20,6 +20,7 @@ After(async function (this: AcceptanceWorld, { result, pickle }) {
               scenario: pickle.name,
               response: this.response && {
                 status: this.response.status,
+                elapsedMs: this.response.elapsedMs,
                 headers: this.response.headers,
                 rawBody: this.response.rawBody.slice(0, 3000),
               },

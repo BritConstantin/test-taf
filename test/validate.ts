@@ -23,6 +23,7 @@ import {
   FIXED_NOW,
   PROVIDER_DEADLINE_MS,
   STUB_DELAY_MS,
+  PROVIDER_TIMEOUT_RESPONSE_BUDGET_MS,
 } from '../src/config';
 
 function example(name: string, status: number): HttpResult {
@@ -33,6 +34,7 @@ function example(name: string, status: number): HttpResult {
     headers: { 'content-type': 'application/json' },
     rawBody,
     body,
+    elapsedMs: 0,
   };
 }
 
@@ -134,7 +136,8 @@ async function main(): Promise<void> {
     });
   }
   assert.ok(
-    PROVIDER_DEADLINE_MS < STUB_DELAY_MS &&
+    PROVIDER_DEADLINE_MS < PROVIDER_TIMEOUT_RESPONSE_BUDGET_MS &&
+      PROVIDER_TIMEOUT_RESPONSE_BUDGET_MS < STUB_DELAY_MS &&
       STUB_DELAY_MS < config().requestTimeoutMs,
   );
   console.log(

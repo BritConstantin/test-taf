@@ -4,6 +4,8 @@ import Ajv from 'ajv';
 import addFormats from 'ajv-formats';
 import type { HttpResult } from '../api/client';
 import type { Weather, ProviderLocation } from '../provider/fixtures';
+import { PROVIDER_TIMEOUT_RESPONSE_BUDGET_MS } from '../config';
+import { assertExplanation } from './explanations';
 
 export interface Location {
   id: number;
@@ -113,6 +115,17 @@ export function assertError(
   );
 }
 
+export function assertProviderTimeout(result: HttpResult): void {
+  // Only an actual HTTP error response can satisfy this contract; transport errors still throw.
+  assertError(result, 504, 'PROVIDER_TIMEOUT');
+  assert.ok(
+    Number.isFinite(result.elapsedMs) &&
+      result.elapsedMs >= 0 &&
+      result.elapsedMs <= PROVIDER_TIMEOUT_RESPONSE_BUDGET_MS,
+    `Provider timeout response took ${result.elapsedMs} ms; expected at most ${PROVIDER_TIMEOUT_RESPONSE_BUDGET_MS} ms including local HTTP overhead`,
+  );
+}
+
 export function publicLocation(value: ProviderLocation): Location {
   return {
     id: value.id,
@@ -162,6 +175,8 @@ export function assertWeek(
     'All seven unique consecutive local dates, including today',
   );
   ranking.days.forEach((day, index) => {
+    const expectedWeather = weather[index];
+    assert.ok(expectedWeather, `Missing weather oracle for ${day.date}`);
     assert.deepEqual(
       day.activities.map((activity) => activity.id).sort(),
       [...activityOrder].sort(),
@@ -185,8 +200,14 @@ export function assertWeek(
       );
       assert.deepEqual(
         activity.reason.facts,
-        weather[index],
+        expectedWeather,
         `${day.date} ${activity.id}: numeric facts with documented units`,
+      );
+      assertExplanation(
+        activity.id,
+        activity.reason.text,
+        expectedWeather,
+        day.date,
       );
     });
   });

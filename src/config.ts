@@ -1,5 +1,9 @@
 export const FIXED_NOW = '2026-10-23T23:30:00Z';
 export const PROVIDER_DEADLINE_MS = 300;
+// Same-host HTTP overhead and scheduling allowance, independent of application time.
+export const PROVIDER_TIMEOUT_TOLERANCE_MS = 300;
+export const PROVIDER_TIMEOUT_RESPONSE_BUDGET_MS =
+  PROVIDER_DEADLINE_MS + PROVIDER_TIMEOUT_TOLERANCE_MS;
 export const STUB_DELAY_MS = 900;
 
 function integer(

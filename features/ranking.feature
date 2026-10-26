@@ -11,12 +11,13 @@ Feature: Rank four activities within each of seven local days
     Then all seven local days contain four correctly ordered activities and weather facts
     And every day gives "surfing" score 70 with reason "SURF_MILD"
 
-  @week @oracle
+  @week @oracle @explanations
   Scenario: Explain all four activities across a varied seven-day forecast
     Given the selected town has the documented varied weather week
     When I request rankings for the selected town
     Then all seven local days contain four correctly ordered activities and weather facts
     And every activity matches the manually specified seven-day examples
+    And the representative explanations describe the controlled weather and activity limitations
 
   @skiing @boundaries
   Scenario Outline: Apply the skiing bands and adverse-weather precedence

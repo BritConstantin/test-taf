@@ -3,7 +3,7 @@ import { Given, When, Then } from '@cucumber/cucumber';
 import type { AcceptanceWorld } from '../support/world';
 import { STUB_DELAY_MS } from '../config';
 import { forecast, forecastQuery } from '../provider/fixtures';
-import { assertError } from '../contracts/validate';
+import { assertError, assertProviderTimeout } from '../contracts/validate';
 
 function installFailure(
   world: AcceptanceWorld,
@@ -25,13 +25,20 @@ function installFailure(
       : stage === 'resolution'
         ? { id: String(world.selected.id), language: 'en', format: 'json' }
         : forecastQuery(world.selected, world.dates);
+  // Valid delayed payloads isolate latency: ignoring the deadline must not fail due to bad JSON/data.
+  const validBody =
+    stage === 'discovery'
+      ? { results: [world.selected], generationtime_ms: 0.1 }
+      : stage === 'resolution'
+        ? world.selected
+        : forecast(world.selected, world.dates, world.weather);
   world.stub.install({
     path,
     query,
     status: timeout ? 200 : 503,
     delayMs: timeout ? STUB_DELAY_MS : 0,
     body: timeout
-      ? {}
+      ? validBody
       : {
           error: true,
           reason: 'UPSTREAM_INTERNAL_MARKER secret-token stack trace',
@@ -66,6 +73,12 @@ When(
 );
 
 Then(
+  'the API returns a provider timeout within the response budget',
+  function (this: AcceptanceWorld) {
+    assertProviderTimeout(this.result());
+  },
+);
+Then(
   'the API returns {int} with code {string}',
   function (this: AcceptanceWorld, status: number, code: string) {
     assertError(this.result(), status, code);
@@ -98,6 +111,22 @@ Given(
       query: { id: String(this.selected.id), language: 'en', format: 'json' },
       status: 400,
       body: { error: true, reason: 'Location ID not found.' },
+    });
+  },
+);
+
+Given(
+  'location resolution rejects the provider request for a reason other than an unknown ID',
+  function (this: AcceptanceWorld) {
+    this.stub.install({
+      path: '/v1/get',
+      query: { id: String(this.selected.id), language: 'en', format: 'json' },
+      status: 400,
+      body: {
+        error: true,
+        reason:
+          'Invalid language parameter. UPSTREAM_INTERNAL_MARKER secret-token stack trace',
+      },
     });
   },
 );

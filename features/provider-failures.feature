@@ -5,7 +5,7 @@ Feature: Fail predictably when input or weather providers cannot be used
   Scenario Outline: Map a provider deadline to a bounded public error
     Given the "<stage>" provider exceeds its deadline
     When I request the capability affected by "<stage>"
-    Then the API returns 504 with code "PROVIDER_TIMEOUT"
+    Then the API returns a provider timeout within the response budget
     And failed discovery or resolution does not request a forecast
 
     Examples:
@@ -32,6 +32,13 @@ Feature: Fail predictably when input or weather providers cannot be used
     Given the location provider cannot resolve the selected ID
     When I request rankings for the selected town
     Then the API returns 404 with code "LOCATION_NOT_FOUND"
+    And the forecast provider is not contacted
+
+  @resolution-bad-request
+  Scenario: A provider bad request does not mean the town is unknown
+    Given location resolution rejects the provider request for a reason other than an unknown ID
+    When I request rankings for the selected town
+    Then the API returns 502 with code "PROVIDER_FAILURE"
     And the forecast provider is not contacted
 
   @invalid-forecast
